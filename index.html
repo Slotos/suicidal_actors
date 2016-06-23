@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Shower Presentation Engine</title>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="shower/themes/ribbon/styles/screen-16x10.css">
+	<link rel="stylesheet" href="./highlight.js/9.4.0/styles/default.min.css">
+	<script src="./highlight.js/9.4.0/highlight.min.js"></script>
+	<style>
+	.eightypercent {
+		font-size: 80%;
+	}
+	</style>
+</head>
+<body class="shower list">
+	<header class="caption">
+		<h1>Suicidal tendencies in show business</h1>
+		<p>Yours Truly, Jack of all trades, master of some.</p>
+	</header>
+	<!--
+	1. This is not an Elixir talk and you shouldn't be too serious about what I tell you about
+	2. Who am I, and how I was coerced to stand and sweat here
+	3.
+	-->
+	<section class="slide">
+	</section>
+	<section class="slide">
+		<h2>Сила воли</h2>
+		<h2>Или как выйти из рекурсивного запоя.</h2>
+	</section>
+	<section class="slide">
+		<h2>Суицидальные наклонности в шоу-бизнесе</h2>
+		<p>или "Cмерть актёра - это ещё не занавес"</p>
+	</section>
+	<section class="slide">
+		<h2>This talk is <i>not</i> about Elixir.</h2>
+		<p>Albeit it could be related.</p>
+		<p class="note">It's not solemn, but it is not bereft of seriousness.</p>
+	</section>
+	<section class="slide">
+		<h2>I'm not the drone you're looking for</h2>
+		<ol>
+			<li>I don't use Elixir (much) (yet)</li>
+			<li class="next">I did use Celluloid in production successfully</li>
+			<li class="next">I didn't want to stand here sweating, but I had been coerced</li>
+			<li class="next">I might be suffering from an impostor syndrome right now</li>
+			<li class="next">...</li>
+			<li class="next">Be gentle</li>
+		</ol>
+		<p class="note">Name's Dima. Pleasure to meet you.</p>
+	</section>
+	<section class="slide">
+		<h2>Wasting a fair bit of time</h2>
+		<p>I might remember something here.<br />I might not.</p>
+	</section>
+	<section class="slide">
+		<h2>Baby steps</h2>
+		<pre class="eightypercent">
+			<code class="ruby">
+def run
+	unless ENV['DEBUG']
+		Process.daemon true # don't chdir for now
+		Process.setsid # We're the session and group leader now
+	end
+	write_pid
+	trap_term_signal
+	begin
+		run_master_loop
+			</code>
+		</pre>
+	</section>
+	<section class="slide">
+		<h2>Baby steps</h2>
+		<pre class="eightypercent">
+			<code class="ruby">
+def run_master_loop
+	tick_interval = 1
+	until @stop
+		if Master::DESIRED_RUNNERS > Display.emitted_displays_total
+			Watchdog.spawn_runner
+		end
+		Watchdog.check_displays
+		sleep tick_interval
+	end
+end
+			</code>
+		</pre>
+	</section>
+	<section class="slide">
+		<h2>Fire and forget</h2>
+		<p>The core practical nuance behind actors.</p>
+		<p class="note">As I later learned</p>
+	</section>
+	<section class="slide">
+		<h2>Fire and forget</h2>
+		<p>I don't care how succsessful any particular process/thread of execution is as long as I get desired result.</p>
+		<p>I can't affort babysitting a bunch of whiny kids.</p>
+	</section>
+	<section class="slide">
+		<h2>Fire and forget</h2>
+		<pre class="eightypercent">
+			<code class="java">
+try {
+    c = Cipher.getInstance("AES/CBC/PKCS7PADDING");
+    c.init(Cipher.DECRYPT_MODE, key, iv);
+    result = c.doFinal(data);
+} catch (NoSuchAlgorithmException | NoSuchPaddingException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException | InvalidKeyException e) {
+    e.printStackTrace();
+}
+			</code>
+		</pre>
+	</section>
+	<section class="slide">
+		<h2>Forget me not</h2>
+		<p>There is a threshold of noticeability.</p>
+		<p>If 90% of the processes die without executing main code, I'm wasting money.</p>
+		<p class="note">You think herding cats is hard? Try herding bunch of processes on a resource starved kernel. I got to learn tweaks no one should ever learn.</p>
+	</section>
+	<section class="slide">
+		<h2>All is good that ends good</h2>
+		<p>Don't worry, I've forgotten them all.</p>
+	</section>
+	<section class="slide">
+		<h2>Actors</h2>
+		<p>The actor model in computer science is a mathematical model of concurrent computation that treats "actors" as the universal primitives of concurrent computation. In response to a message that it receives, an actor can: make local decisions, create more actors, send more messages, and determine how to respond to the next message received. Actors may modify private state, but can only affect each other through messages (avoiding the need for any locks).</p>
+		<p class="note">Actor model is a lot more than I'm talking about.</p>
+	</section>
+	<section class="slide">
+		<h2>Actors in wikipedia</h2>
+		<p>The Actor model adopts the philosophy that everything is an actor.</p>
+		<p>An actor is a computational entity that, in response to a message it receives, can concurrently:</p>
+		<ul>
+			<li>send a finite number of messages to other actors;</li>
+			<li>create a finite number of new actors;</li>
+			<li>designate the behavior to be used for the next message it receives.</li>
+		</ul>
+		<p class="note">I smell OOP spirit. Well, Smalltalk was an inspiration.</p>
+	</section>
+	<section class="slide">
+		<h2>Meet Celluloid</h2>
+		<p><a href="https://celluloid.io/">https://celluloid.io/</a></p>
+		<p>An actor model library for Ruby. Mimics Erlang and Akka (which too mimics Erlang).</p>
+		<p>Used in Sidekiq up till last year. I've used it successfully for a bunch of long running daemons. A lifesaver for any kind of task, that can be reduced to a set of isolated execution units.</p>
+	</section>
+	<section class="slide">
+		<h2>Meet Elixir</h2>
+		<p><a href="http://elixir-lang.org/">http://elixir-lang.org/</a></p>
+		<p>Erlang VM with GMO.</p>
+		<p>Other speakers have introduced it to you.</p>
+		<p>Processes in BEAM are isolated, easy to create, easy to forget when need be.</p>
+	</section>
+	<section class="slide">
+		<h2>Meet Elixir</h2>
+		<p>Tell your fellow system administrator that they can have great syntax with Erlang VM.</p>
+		<p>They'll curse and praise you while rewriting their custom tools.</p>
+	</section>
+	<section class="slide">
+		<h2>Biblical ending</h2>
+		<p>Hopefully the one without stoning.</p>
+	</section>
+	<section class="slide">
+		<h2>Thank you</h2>
+		<p>I hope this was entertaining and educating.</p>
+	</section>
+	<div class="progress"></div>
+	<script src="shower/shower.min.js"></script>
+	<!-- Copyright © 2015 Yours Truly, Famous Inc. -->
+	<!-- Photos by John Carey, fiftyfootshadows.net -->
+	<script>
+	var codes = document.querySelectorAll('pre>code');
+	for (var i = 0, len = codes.length; i < len; i++) {
+		hljs.highlightBlock(codes[i]);
+	}
+	</script>
+</body>
+</html>
